@@ -1,16 +1,12 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { Button, Form, FormField, Header, Icon, Input, Modal, ModalActions, ModalContent } from "semantic-ui-react";
 import { IChannel } from "../../models/channel";
 import { v4 as uuid } from "uuid";
-
-interface IProp {
-    open: boolean;
-    setOpen: (value: boolean) => void;
-    createChannel: (channel: IChannel) => void;
-}
+import ChannelStore from "../../stores/ChannelStore";
+import { observer } from "mobx-react-lite";
 
 
-export function ChannelForm(props: IProp) {
+function ChannelForm() {
 
     const initChannel = {
         id: "",
@@ -20,13 +16,19 @@ export function ChannelForm(props: IProp) {
 
     const [channel, setChannel] = useState<IChannel>(initChannel);
 
+    const channelStore = useContext(ChannelStore)
+
+    useEffect(() => {
+
+    }, [channelStore]);
+
     function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
         setChannel({...channel, [event.target.name]: event.target.value});
     }
 
     function closeModal(){
         setChannel(initChannel);
-        props.setOpen(false);
+        channelStore.setOpenModal(false);
     }
 
     function saveChannel(){
@@ -34,16 +36,16 @@ export function ChannelForm(props: IProp) {
             ...channel,
             id: uuid()
         }
-        props.createChannel(newChannel);
+        channelStore.createChannel(newChannel);
         closeModal();
     }
 
     return(
         <Modal
             basic
-            onClose={() => props.setOpen(false)}
-            onOpen={() => props.setOpen(true)}
-            open={props.open}
+            onClose={() => channelStore.setOpenModal(false)}
+            onOpen={() => channelStore.setOpenModal(true)}
+            open={channelStore.openModal}
             size='small'
             trigger={<Icon name="add" style={{ paddingLeft: "3rem" }}/>}
         >
@@ -80,3 +82,5 @@ export function ChannelForm(props: IProp) {
         </Modal>
     );
 }
+
+export default observer(ChannelForm)

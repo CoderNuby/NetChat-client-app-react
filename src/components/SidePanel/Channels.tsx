@@ -1,32 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Divider, Icon, MenuItem, MenuMenu } from "semantic-ui-react";
 import { IChannel } from "../../models/channel";
 import { ChannelItem } from "./ChannelItem";
-import { ChannelForm } from "./ChannelForm";
+import ChannelForm from "./ChannelForm";
+import ChannelStore from "../../stores/ChannelStore";
+import { observer } from "mobx-react-lite";
 
-import channelServices from "../../services/ChannelService";
 
 function Channels () {
 
     const [channels, setChannels] = useState<IChannel[]>([]);
-    const [open, setOpen] = useState<boolean>(false);
+    const channelStore = useContext(ChannelStore);
 
     useEffect(() => {
-        channelServices.getChannels().then((response) => {
-            setChannels(response);
-        });
-    }, []);
+        channelStore.loadChannels();
+        setChannels(channelStore.channels);
+    }, [channelStore]);
 
     function displayChannels(channels: IChannel[]) {
         return (
             channels.length > 0 &&
             channels.map((channel) => (<ChannelItem key={channel.id} channel={channel} />))
         );
-    }
-
-    function handleCreate(channel: IChannel){
-        channelServices.createChannel(channel);
-        setChannels([...channels, channel]);
     }
 
     return (
@@ -39,9 +34,6 @@ function Channels () {
                     ({channels.length})
                     
                     <ChannelForm
-                        open={open}
-                        setOpen={setOpen}
-                        createChannel={handleCreate}
                         />
                 </MenuItem>
                 <Divider />
@@ -51,4 +43,4 @@ function Channels () {
     );
 }
 
-export default Channels;
+export default observer(Channels);

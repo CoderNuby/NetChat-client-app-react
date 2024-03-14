@@ -1,4 +1,3 @@
-import React from "react";
 import { Dropdown, Grid, GridColumn, GridRow, Header, HeaderContent, Icon } from "semantic-ui-react";
 
 

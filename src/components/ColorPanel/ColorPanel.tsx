@@ -1,4 +1,3 @@
-import React from "react";
 import { Button, Divider, Menu, Sidebar } from "semantic-ui-react";
 
 
