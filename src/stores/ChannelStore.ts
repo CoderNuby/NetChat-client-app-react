@@ -1,12 +1,15 @@
 import { action, configure, makeObservable, observable, runInAction } from "mobx";
 import { createContext } from "react";
 import { IChannel } from "../models/channel";
-import channelServices from "../services/ChannelService";
+import ChannelServices from "../services/ChannelService";
 
 configure({enforceActions: "always"})
 class ChannelStore {
 
+    channelServices: ChannelServices;
+
     constructor(){
+        this.channelServices = new ChannelServices();
         makeObservable(this);
     }
 
@@ -15,7 +18,7 @@ class ChannelStore {
 
     @action async loadChannels() {
         try {
-            var resp = await channelServices.getChannels();
+            var resp = await this.channelServices.getChannels();
             runInAction(() => {
                 resp.forEach((channel) => this.channels.push(channel));
             })
@@ -30,7 +33,7 @@ class ChannelStore {
 
     @action async createChannel(channel: IChannel){
         try {
-            await channelServices.createChannel(channel);
+            await this.channelServices.createChannel(channel);
             runInAction(() => {
                 this.channels.push(channel);
             });
