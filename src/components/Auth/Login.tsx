@@ -1,8 +1,24 @@
 import { Link } from "react-router-dom";
-import { Button, Form, FormInput, Grid, GridColumn, Header, Icon, Message, Segment } from "semantic-ui-react";
+import { Button, Form, Grid, GridColumn, Header, Icon, Message, Segment } from "semantic-ui-react";
 
+import { Form as FinalForm, Field } from "react-final-form";
+import { InputGeneric } from "../Common/Forms/InputGeneric";
+import AuthStore from "../../stores/AuthStore";
+import { useContext } from "react";
+import { IUserLoginModel } from "../../models/userLoginModel";
+import { toast } from "react-toastify";
 
 function Login() {
+    const authStore = useContext(AuthStore);
+
+    function onSubmit(values: IUserLoginModel){
+        if(!values.email || !values.password){
+            toast.error("Both email and password are required");
+            return;
+        }
+        authStore.Login(values);
+    }
+
     return(
         <Grid
             textAlign="center"
@@ -14,27 +30,29 @@ function Login() {
                     <Icon name="code branch" color="violet" />
                     Login to NetChat
                 </Header>
-                <Form size="large">
-                    <Segment stacked>
-                        <FormInput
-                            fluid
-                            name="email"
-                            icon={"mail"}
-                            iconPosition="left"
-                            placeholder="Email"
-                            type="email">
-                        </FormInput>
-                        <FormInput
-                            fluid
-                            name="password"
-                            icon={"lock"}
-                            iconPosition="left"
-                            placeholder="Password"
-                            type="password">
-                        </FormInput>
-                        <Button color="violet" fluid size="large">Login</Button>
-                    </Segment>
-                </Form>
+                <FinalForm
+                onSubmit={onSubmit}
+                render={({ handleSubmit }) => (
+                    <Form onSubmit={handleSubmit} size="large">
+                        <Segment stacked>
+                            <Field
+                                name="email"
+                                placeholder="Email address"
+                                type="email"
+                                icon="mail"
+                                component={InputGeneric}/>
+                            <Field
+                                name="password"
+                                placeholder="Password"
+                                type="password"
+                                icon="lock"
+                                component={InputGeneric}/>
+                            
+                            <Button color="violet" fluid size="large">Login</Button>
+                        </Segment>
+                    </Form>
+                )}
+                />
                 <Message>
                     Don't you have an account? <Link to={"/register"}>Create an account</Link>
                 </Message>

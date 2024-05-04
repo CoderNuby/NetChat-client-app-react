@@ -1,24 +1,25 @@
 import { action, configure, makeObservable, observable, runInAction } from "mobx";
 import { createContext } from "react";
-import { IChannel } from "../models/channel";
-import ChannelServices from "../services/ChannelService";
+import { IChannelModel } from "../models/channelModel";
+import ChannelService from "../services/ChannelService";
+import { toast } from "react-toastify";
 
 configure({enforceActions: "always"})
 class ChannelStore {
 
-    channelServices: ChannelServices;
+    channelService: ChannelService;
 
     constructor(){
-        this.channelServices = new ChannelServices();
+        this.channelService = new ChannelService();
         makeObservable(this);
     }
 
-    @observable channels: IChannel[] = [];
+    @observable channels: IChannelModel[] = [];
     @observable openModal: boolean = false;
 
     @action async loadChannels() {
         try {
-            var resp = await this.channelServices.getChannels();
+            var resp = await this.channelService.getChannels();
             runInAction(() => {
                 resp.forEach((channel) => this.channels.push(channel));
             })
@@ -31,11 +32,12 @@ class ChannelStore {
         this.openModal = open;
     }
 
-    @action async createChannel(channel: IChannel){
+    @action async createChannel(channel: IChannelModel){
         try {
-            await this.channelServices.createChannel(channel);
+            await this.channelService.createChannel(channel);
             runInAction(() => {
                 this.channels.push(channel);
+                toast.success("Channel created successfuly");
             });
         } catch (err) {
             console.error(err);

@@ -1,6 +1,6 @@
 import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { Button, Form, FormField, Header, Icon, Input, Modal, ModalActions, ModalContent } from "semantic-ui-react";
-import { IChannel } from "../../models/channel";
+import { IChannelModel } from "../../models/channelModel";
 import { v4 as uuid } from "uuid";
 import ChannelStore from "../../stores/ChannelStore";
 import { observer } from "mobx-react-lite";
@@ -14,7 +14,7 @@ function ChannelForm() {
         description: ""
     }
 
-    const [channel, setChannel] = useState<IChannel>(initChannel);
+    const [channel, setChannel] = useState<IChannelModel>(initChannel);
 
     const channelStore = useContext(ChannelStore)
 

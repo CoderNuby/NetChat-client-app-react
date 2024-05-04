@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Divider, Icon, MenuItem, MenuMenu } from "semantic-ui-react";
-import { IChannel } from "../../models/channel";
+import { IChannelModel } from "../../models/channelModel";
 import { ChannelItem } from "./ChannelItem";
 import ChannelForm from "./ChannelForm";
 import ChannelStore from "../../stores/ChannelStore";
@@ -9,7 +9,7 @@ import { observer } from "mobx-react-lite";
 
 function Channels () {
 
-    const [channels, setChannels] = useState<IChannel[]>([]);
+    const [channels, setChannels] = useState<IChannelModel[]>([]);
     const channelStore = useContext(ChannelStore);
 
     useEffect(() => {
@@ -17,7 +17,7 @@ function Channels () {
         setChannels(channelStore.channels);
     }, [channelStore]);
 
-    function displayChannels(channels: IChannel[]) {
+    function displayChannels(channels: IChannelModel[]) {
         return (
             channels.length > 0 &&
             channels.map((channel) => (<ChannelItem key={channel.id} channel={channel} />))
