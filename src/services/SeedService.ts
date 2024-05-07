@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import { IUserModel } from "../models/userModel";
 
-export class SeedService<T> {
+export class SeedService {
     constructor(){
         axios.defaults.baseURL = "https://localhost:44397/api/";
         axios.interceptors.response.use(undefined, (err) => {
@@ -31,14 +31,13 @@ export class SeedService<T> {
     }
 
     protected request = {
-        get: (url: string) => axios.get(url).then(this.responseBody),
-        create: (url: string, modelClass: T) => axios.post(url, modelClass).then(this.responseBody),
-        post: (url: string, modelClass: T) => axios.post(url, modelClass).then(this.responseBody),
-        put: (url: string, modelClass: T) => axios.put(url, modelClass).then(this.responseBody),
-        delete: (url: string) => axios.delete(url).then(this.responseBody)
+        get: <TResponse>(url: string) => axios.get(url).then(this.responseBody<TResponse>),
+        post: <TRequest, TResponse>(url: string, modelClass: TRequest) => axios.post(url, modelClass).then(this.responseBody<TResponse>),
+        put: <TRequest, TResponse>(url: string, modelClass: TRequest) => axios.put(url, modelClass).then(this.responseBody<TResponse>),
+        delete: <TReasponse>(url: string) => axios.delete(url).then(this.responseBody<TReasponse>)
     }
     
-    protected responseBody(response: AxiosResponse) { return response.data };
+    protected responseBody<TResponse>(response: AxiosResponse<TResponse>) { return response.data };
 
     private getToken(){
         const userJson = localStorage.getItem("user");

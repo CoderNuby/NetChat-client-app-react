@@ -4,6 +4,7 @@ import { IChannelModel } from "../../models/channelModel";
 import { v4 as uuid } from "uuid";
 import ChannelStore from "../../stores/ChannelStore";
 import { observer } from "mobx-react-lite";
+import { toast } from "react-toastify";
 
 
 function ChannelForm() {
@@ -11,7 +12,9 @@ function ChannelForm() {
     const initChannel = {
         id: "",
         name: "",
-        description: ""
+        description: "",
+        messages: [],
+        channelType: 0
     }
 
     const [channel, setChannel] = useState<IChannelModel>(initChannel);
@@ -35,6 +38,10 @@ function ChannelForm() {
         let newChannel = {
             ...channel,
             id: uuid()
+        }
+        if(newChannel.name.length === 0 || newChannel.description.length === 0){
+            toast.error("Both name and description are require");
+            return;
         }
         channelStore.createChannel(newChannel);
         closeModal();

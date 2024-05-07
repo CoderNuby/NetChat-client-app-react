@@ -13,7 +13,7 @@ function Login() {
 
     function onSubmit(values: IUserLoginModel){
         if(!values.email || !values.password){
-            toast.error("Both email and password are required");
+            toast.error("Both email and password are require");
             return;
         }
         authStore.Login(values);

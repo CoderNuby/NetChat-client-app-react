@@ -1,4 +1,4 @@
-import { action, configure, makeObservable, observable, runInAction } from "mobx";
+import { action, configure, makeObservable, observable, runInAction, toJS } from "mobx";
 import { createContext } from "react";
 import { IChannelModel } from "../models/channelModel";
 import ChannelService from "../services/ChannelService";
@@ -16,6 +16,7 @@ class ChannelStore {
 
     @observable channels: IChannelModel[] = [];
     @observable openModal: boolean = false;
+    @observable private activeChannel: IChannelModel | null = null;
 
     @action async loadChannels() {
         try {
@@ -34,14 +35,25 @@ class ChannelStore {
 
     @action async createChannel(channel: IChannelModel){
         try {
-            await this.channelService.createChannel(channel);
+            var newChannel = await this.channelService.createChannel(channel);
             runInAction(() => {
-                this.channels.push(channel);
+                this.channels.push(newChannel);
                 toast.success("Channel created successfuly");
             });
         } catch (err) {
             console.error(err);
         }
+    }
+
+    @action async setActiveChannel(channel: IChannelModel){
+        let result = await this.channelService.getChannel(channel.id);
+        runInAction(() => {
+            this.activeChannel = result;
+        });
+    }
+
+    getActiveChannel(){
+        return toJS(this.activeChannel);
     }
 }
 

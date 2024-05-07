@@ -4,7 +4,7 @@ import { SeedService } from "./SeedService";
 import { IUserCreateModel } from "../models/userCreateModel";
 
 
-class AuthService extends SeedService<IUserLoginModel>{
+class AuthService extends SeedService {
     login(user: IUserLoginModel): Promise<IUserModel>{
         return this.request.post("auth/login", user);
     }

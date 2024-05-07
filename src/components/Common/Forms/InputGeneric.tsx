@@ -13,8 +13,13 @@ export function InputGeneric(props: IProps){
             iconPosition="left"
             placeholder={props.placeholder}
             type={props.type}>
+                {props.iconLabel && (
+                    props.iconLabel
+                )}
                 <input {...props.input} />
-                <Icon name={props.icon} />
+                {props.icon && (
+                    <Icon name={props.icon} />
+                )}
         </FormInput>
     );
 }

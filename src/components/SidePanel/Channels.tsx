@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Divider, Icon, MenuItem, MenuMenu } from "semantic-ui-react";
 import { IChannelModel } from "../../models/channelModel";
-import { ChannelItem } from "./ChannelItem";
+import ChannelItem from "./ChannelItem";
 import ChannelForm from "./ChannelForm";
 import ChannelStore from "../../stores/ChannelStore";
 import { observer } from "mobx-react-lite";
