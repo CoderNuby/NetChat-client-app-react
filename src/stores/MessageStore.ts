@@ -3,6 +3,7 @@ import { createContext } from "react";
 import { IMessageModel } from "../models/messageModel";
 import { ICreateMessageModel } from "../models/createMessageModel";
 import MessageServices from "../services/MessageService";
+import { ICreateMediaMessageModel } from "../models/createMediaMessageModel";
 
 
 configure({enforceActions: "always"})
@@ -20,6 +21,17 @@ class MessageStore {
     @action async sendMessage(message: ICreateMessageModel){
         try {
             let result = await this.messageService.send(message);
+            runInAction(() => {
+                this.messages.push(result);
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    @action async uploadImage(message: ICreateMediaMessageModel){
+        try {
+            let result = await this.messageService.uploadMedia(message);
             runInAction(() => {
                 this.messages.push(result);
             });

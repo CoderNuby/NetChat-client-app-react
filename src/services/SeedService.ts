@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import { IUserModel } from "../models/userModel";
 
@@ -32,7 +32,7 @@ export class SeedService {
 
     protected request = {
         get: <TResponse>(url: string) => axios.get(url).then(this.responseBody<TResponse>),
-        post: <TRequest, TResponse>(url: string, modelClass: TRequest) => axios.post(url, modelClass).then(this.responseBody<TResponse>),
+        post: <TRequest, TResponse>(url: string, modelClass: TRequest, config?: AxiosRequestConfig) => axios.post(url, modelClass, config).then(this.responseBody<TResponse>),
         put: <TRequest, TResponse>(url: string, modelClass: TRequest) => axios.put(url, modelClass).then(this.responseBody<TResponse>),
         delete: <TReasponse>(url: string) => axios.delete(url).then(this.responseBody<TReasponse>)
     }

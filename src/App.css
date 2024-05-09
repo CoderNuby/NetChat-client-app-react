@@ -8,3 +8,8 @@ html, body, .app{
   border-left: 2px solid orange;
   padding-left: 7px;
 }
+
+.message_other{
+  border-left: 2px solid rgb(37, 125, 240);
+  padding-left: 7px;
+}

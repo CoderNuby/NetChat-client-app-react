@@ -1,3 +1,4 @@
+import { MessageType } from "./messageType";
 import { IUserModel } from "./userModel";
 
 export interface IMessageModel{
@@ -7,5 +8,5 @@ export interface IMessageModel{
     createdAt: Date;
     sender: IUserModel;
     senderId: string;
-    messageType: number;
+    messageType: MessageType;
 }
