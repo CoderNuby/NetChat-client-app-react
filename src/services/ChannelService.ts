@@ -15,6 +15,10 @@ class ChannelServices extends SeedService {
     createChannel(channel: IChannelModel): Promise<IChannelModel>{
         return this.request.post("channels", channel);
     }
+
+    createPrivateChannel(userId: string): Promise<IChannelModel> {
+        return this.request.post(`channels/private/${userId}`, {});
+    }
 }
 
 export default ChannelServices; 

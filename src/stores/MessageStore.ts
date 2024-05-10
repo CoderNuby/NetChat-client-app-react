@@ -1,9 +1,10 @@
 import { action, configure, makeObservable, observable, runInAction, toJS } from "mobx";
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 import { IMessageModel } from "../models/messageModel";
 import { ICreateMessageModel } from "../models/createMessageModel";
 import MessageServices from "../services/MessageService";
 import { ICreateMediaMessageModel } from "../models/createMediaMessageModel";
+import { HubConnection, HubConnectionBuilder, LogLevel } from "@aspnet/signalr";
 
 
 configure({enforceActions: "always"})
@@ -17,6 +18,7 @@ class MessageStore {
     }
 
     @observable private messages: IMessageModel[] = [];
+    @observable.ref hubConnection: HubConnection | null = null;
 
     @action async sendMessage(message: ICreateMessageModel){
         try {
@@ -42,6 +44,27 @@ class MessageStore {
 
     @action setMessages(messages: IMessageModel[] = []){
         this.messages = messages;
+    }
+
+    @action createHubConnection(token: string) {
+        runInAction(() => {
+            this.hubConnection = new HubConnectionBuilder().withUrl("https://localhost:44397/chat", {
+                accessTokenFactory: () => token
+            }).configureLogging(LogLevel.Information)
+            .build();
+        });
+
+        this.hubConnection?.start().catch((error) => console.log(error));
+
+        this.hubConnection?.on("ReceiveMessage", (message: IMessageModel) => {
+            runInAction(() => {
+                this.messages.push(message);
+            });
+        });
+    }
+
+    @action stopHubConnection() {
+        this.hubConnection?.stop();
     }
 
     getMessages(){

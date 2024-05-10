@@ -13,8 +13,11 @@ function Channels () {
     const channelStore = useContext(ChannelStore);
 
     useEffect(() => {
-        channelStore.loadChannels();
-        setChannels(channelStore.channels);
+        async function loadData(){
+            await channelStore.loadChannels();
+            setChannels(channelStore.getChannels());
+        }
+        loadData()
     }, [channelStore]);
 
     function displayChannels(channels: IChannelModel[]) {
@@ -26,7 +29,7 @@ function Channels () {
 
     return (
         <React.Fragment>
-            <MenuMenu style={{paddingBottom: "2rem", color: "#afadad"}}>
+            <MenuMenu style={{paddingBottom: "2rem"}}>
                 <MenuItem>
                     <span style={{ paddingRight: "0.5rem" }}>
                         <Icon name="exchange" /> CHANNELS

@@ -4,6 +4,7 @@ import { SearchInput } from "./SearchInput";
 import React, { useContext } from "react";
 import ChannelStore from "../../stores/ChannelStore";
 import { observer } from "mobx-react-lite";
+import { ChannelTypeEnum } from "../../models/channelTypeEnum";
 
 
 function MessageHeader() {
@@ -27,8 +28,18 @@ function MessageHeader() {
                 {channelStore.getActiveChannel() != null && (
                     <React.Fragment>
                         <span>
-                            {channelStore.getActiveChannel()?.name}
-                            <Icon name={"star outline"} color="black" />
+                            {channelStore.getActiveChannel()?.channelType === ChannelTypeEnum.Channel && (
+                                <>
+                                    {channelStore.getActiveChannel()?.name}
+                                    <Icon name={"star outline"} color="black" />
+                                </>
+                            )}
+                            {channelStore.getActiveChannel()?.channelType === ChannelTypeEnum.Room && (
+                                <>
+                                    {`Channel opened with ${channelStore.getActiveChannel()?.description}`}
+                                    <Icon name={"users"} color="black" />
+                                </>
+                            )}
                         </span>
                         <HeaderSubHeader>2 Users</HeaderSubHeader>
                     </React.Fragment>

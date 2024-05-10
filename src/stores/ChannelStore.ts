@@ -3,6 +3,7 @@ import { createContext } from "react";
 import { IChannelModel } from "../models/channelModel";
 import ChannelService from "../services/ChannelService";
 import { toast } from "react-toastify";
+import { ChannelTypeEnum } from "../models/channelTypeEnum";
 
 configure({enforceActions: "always"})
 class ChannelStore {
@@ -14,7 +15,7 @@ class ChannelStore {
         makeObservable(this);
     }
 
-    @observable channels: IChannelModel[] = [];
+    @observable private channels: IChannelModel[] = [];
     @observable openModal: boolean = false;
     @observable private activeChannel: IChannelModel | null = null;
 
@@ -22,7 +23,7 @@ class ChannelStore {
         try {
             var resp = await this.channelService.getChannels();
             runInAction(() => {
-                resp.forEach((channel) => this.channels.push(channel));
+                this.channels = resp.filter(x => x.channelType === ChannelTypeEnum.Channel);
             })
         } catch (err) {
             console.error(err);
@@ -45,14 +46,27 @@ class ChannelStore {
         }
     }
 
-    @action async setActiveChannel(channel: IChannelModel){
-        let result = await this.channelService.getChannel(channel.id);
+    @action async createPrivateChannel(userId: string) {
+        try {
+            var newChannel = await this.channelService.createPrivateChannel(userId);
+            await this.setActiveChannel(newChannel.id);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    @action async setActiveChannel(channelId: string){
+        let result = await this.channelService.getChannel(channelId);
         runInAction(() => {
             this.activeChannel = result;
         });
     }
 
-    getActiveChannel(){
+    getChannels() {
+        return toJS(this.channels);
+    }
+
+    getActiveChannel() {
         return toJS(this.activeChannel);
     }
 }

@@ -15,7 +15,7 @@ function ChannelItem(props: IProp) {
     const messageStore = useContext(MessageStore);
 
     async function changeChannel(channel: IChannelModel){
-        await channelStore.setActiveChannel(channel);
+        await channelStore.setActiveChannel(channel.id);
         let messages = channelStore.getActiveChannel()?.messages;
         messageStore.setMessages(messages);
     }

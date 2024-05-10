@@ -9,12 +9,13 @@ import { toast } from "react-toastify";
 
 function ChannelForm() {
 
-    const initChannel = {
+    const initChannel: IChannelModel = {
         id: "",
         name: "",
         description: "",
         messages: [],
-        channelType: 0
+        channelType: 0,
+        privateChannelId: ""
     }
 
     const [channel, setChannel] = useState<IChannelModel>(initChannel);

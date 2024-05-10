@@ -1,3 +1,4 @@
+import { ChannelTypeEnum } from "./channelTypeEnum";
 import { IMessageModel } from "./messageModel";
 
 export interface IChannelModel{
@@ -5,5 +6,6 @@ export interface IChannelModel{
     name: string;
     description: string;
     messages: IMessageModel[];
-    channelType: number;
+    channelType: ChannelTypeEnum;
+    privateChannelId: string;
 }

@@ -16,6 +16,10 @@ class AuthService extends SeedService {
     getCurrentUser(user: IUserLoginModel): Promise<IUserModel>{
         return this.request.get("auth/current-user");
     }
+
+    logout(id: string): Promise<any>{
+        return this.request.get(`auth/logout/${id}`);
+    }
 }
 
 export default AuthService;

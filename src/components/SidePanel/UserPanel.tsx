@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Dropdown, Grid, GridColumn, GridRow, Header, HeaderContent, Icon } from "semantic-ui-react";
 import AuthStore from "../../stores/AuthStore";
 import { IUserModel } from "../../models/userModel";
+import { observer } from "mobx-react-lite";
 
 function UserPanel() {
 
@@ -9,7 +10,8 @@ function UserPanel() {
     const authStore = useContext(AuthStore);
 
     useEffect(() => {
-        setUser(authStore.GetUserInfo());
+        authStore.GetUserInfoFromLocalStorage();
+        setUser(authStore.CurrentUser);
     }, [authStore]);
 
     useEffect(() => {
@@ -67,4 +69,4 @@ function UserPanel() {
     );
 }
 
-export default UserPanel;
+export default observer(UserPanel);

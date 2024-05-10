@@ -1,4 +1,4 @@
-import { action, computed, configure, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, configure, makeObservable, observable, runInAction, toJS } from "mobx";
 import { createContext } from "react";
 import AuthService from "../services/AuthService";
 import { IUserLoginModel } from "../models/userLoginModel";
@@ -42,7 +42,6 @@ class AuthStore {
             user.avatar = `https://www.gravatar.com/avatar/${Md5.hashStr(user.email)}?d=identicon`;
             let userResp = await this.authService.register(user);
             runInAction(() => {
-                console.log(userResp);
                 window.location.href = "/login";
             });
         } catch (err) {
@@ -50,25 +49,27 @@ class AuthStore {
         }
     }
 
-    @action GetUserInfo() {
+    @action GetUserInfoFromLocalStorage() {
         const userJson = localStorage.getItem("user");
         if (userJson) {
             let user: IUserModel = JSON.parse(userJson);
-            this.CurrentUser = user;
-            return user;
+            runInAction(() => {
+                this.CurrentUser = user;
+                return toJS(this.CurrentUser);
+            });
         } else {
             return null;
         }
     }
 
-    @action Logout(){
+    @action async Logout(){
+        await this.authService.logout(this.CurrentUser?.id || "");
+        runInAction(() => {
+            this.CurrentUser = null;
+        });
+
         localStorage.removeItem("user");
         window.location.href = "/login";
-    }
-
-    getToken(){
-        let user: IUserModel | null = this.GetUserInfo();
-        return user?.token;
     }
 }
 
