@@ -22,10 +22,7 @@ class MessageStore {
 
     @action async sendMessage(message: ICreateMessageModel){
         try {
-            let result = await this.messageService.send(message);
-            runInAction(() => {
-                this.messages.push(result);
-            });
+            let result = await this.hubConnection?.invoke("SendMessage", message);
         } catch (error) {
             console.error(error);
         }
@@ -34,9 +31,6 @@ class MessageStore {
     @action async uploadImage(message: ICreateMediaMessageModel){
         try {
             let result = await this.messageService.uploadMedia(message);
-            runInAction(() => {
-                this.messages.push(result);
-            });
         } catch (error) {
             console.error(error);
         }
@@ -56,8 +50,9 @@ class MessageStore {
 
         this.hubConnection?.start().catch((error) => console.log(error));
 
-        this.hubConnection?.on("ReceiveMessage", (message: IMessageModel) => {
+        this.hubConnection?.on("ReceiveMessage", (response) => {
             runInAction(() => {
+                let message = response.result;
                 this.messages.push(message);
             });
         });

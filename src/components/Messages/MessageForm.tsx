@@ -25,7 +25,7 @@ export function MessageForm() {
 
         let channel = channelStore.getActiveChannel();
         values.channelId = channel?.id || "";
-        messageStore.sendMessage(values);
+        await messageStore.sendMessage(values);
     }
 
     async function uploadFile(image: Blob | null) {
