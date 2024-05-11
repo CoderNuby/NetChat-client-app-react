@@ -1,30 +1,39 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { Divider, Icon, MenuItem, MenuMenu } from "semantic-ui-react";
 import { IChannelModel } from "../../models/channelModel";
 import ChannelItem from "./ChannelItem";
 import ChannelForm from "./ChannelForm";
-import ChannelStore from "../../stores/ChannelStore";
 import { observer } from "mobx-react-lite";
+import { ChannelTypeEnum } from "../../models/channelTypeEnum";
+import RootStore from "../../stores/RootStore";
 
 
 function Channels () {
-
-    const [channels, setChannels] = useState<IChannelModel[]>([]);
-    const channelStore = useContext(ChannelStore);
+    const rootStore = useContext(RootStore);
 
     useEffect(() => {
         async function loadData(){
-            await channelStore.loadChannels();
-            setChannels(channelStore.getChannels());
+            await rootStore.channelStore.loadChannels();
         }
         loadData()
-    }, [channelStore]);
+    }, [rootStore]);
 
     function displayChannels(channels: IChannelModel[]) {
         return (
             channels.length > 0 &&
-            channels.map((channel) => (<ChannelItem key={channel.id} channel={channel} />))
+            channels.map((channel) => (<ChannelItem key={channel.id} channel={channel} notificationCounter={notificationCounter} />))
         );
+    }
+
+    function notificationCounter(channel: IChannelModel) {
+        let count = 0;
+        rootStore.channelStore.channelNotification.forEach((notification) => {
+            if(notification.id === channel.id && notification.sender.userName !== rootStore.authStore.CurrentUser?.userName){
+                count = notification.newMessages;
+            }
+        });
+
+        if (count > 0) return count;
     }
 
     return (
@@ -34,13 +43,13 @@ function Channels () {
                     <span style={{ paddingRight: "0.5rem" }}>
                         <Icon name="exchange" /> CHANNELS
                     </span>
-                    ({channels.length})
+                    ({rootStore.channelStore.channels.filter(x => x.channelType === ChannelTypeEnum.Channel).length})
                     
                     <ChannelForm
                         />
                 </MenuItem>
                 <Divider />
-                {displayChannels(channels)}
+                {displayChannels(rootStore.channelStore.channels.filter(x => x.channelType === ChannelTypeEnum.Channel))}
             </MenuMenu>
         </React.Fragment>
     );

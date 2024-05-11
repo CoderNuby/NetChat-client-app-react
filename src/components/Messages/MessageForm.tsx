@@ -1,39 +1,37 @@
 import { Button, ButtonGroup, Form, Segment } from "semantic-ui-react";
 import { Form as FinalForm, Field } from "react-final-form";
-import { ICreateMessageModel } from "../../models/createMessageModel";
+import { IMessageCreateModel } from "../../models/messageCreateModel";
 import { InputGeneric } from "../Common/Forms/InputGeneric";
 import { useContext, useState } from "react";
-import MessageStore from "../../stores/MessageStore";
-import ChannelStore from "../../stores/ChannelStore";
 import { toast } from "react-toastify";
 import FileModal from "./FileModal";
-import { ICreateMediaMessageModel } from "../../models/createMediaMessageModel";
+import { IMessageCreateMediaModel } from "../../models/messageCreateMediaModel";
+import RootStore from "../../stores/RootStore";
 
 
 export function MessageForm() {
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-    const messageStore = useContext(MessageStore);
-    const channelStore = useContext(ChannelStore);
+    const rootStore = useContext(RootStore);
 
-    async function onSubmit(values: ICreateMessageModel){
-        if(!channelStore.getActiveChannel()){
+    async function onSubmit(values: IMessageCreateModel){
+        if(!rootStore.channelStore.activeChannel){
             toast.error("You should select a canal to send messages");
             return;
         }
 
-        let channel = channelStore.getActiveChannel();
+        let channel = rootStore.channelStore.activeChannel;
         values.channelId = channel?.id || "";
-        await messageStore.sendMessage(values);
+        var message = await rootStore.messageStore.sendMessage(values);
     }
 
     async function uploadFile(image: Blob | null) {
-        const media: ICreateMediaMessageModel = {
-            channelId: channelStore.getActiveChannel()?.id || "",
+        const media: IMessageCreateMediaModel = {
+            channelId: rootStore.channelStore.activeChannel?.id || "",
             file: image || new Blob(),
         };
-        await messageStore.uploadImage(media);
+        let message = await rootStore.messageStore.uploadImage(media);
     }
 
     return (

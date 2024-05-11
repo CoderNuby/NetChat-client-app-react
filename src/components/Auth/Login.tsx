@@ -3,20 +3,20 @@ import { Button, Form, Grid, GridColumn, Header, Icon, Message, Segment } from "
 
 import { Form as FinalForm, Field } from "react-final-form";
 import { InputGeneric } from "../Common/Forms/InputGeneric";
-import AuthStore from "../../stores/AuthStore";
 import { useContext } from "react";
 import { IUserLoginModel } from "../../models/userLoginModel";
 import { toast } from "react-toastify";
+import RootStore from "../../stores/RootStore";
 
 function Login() {
-    const authStore = useContext(AuthStore);
+    const rootStore = useContext(RootStore);
 
     function onSubmit(values: IUserLoginModel){
         if(!values.email || !values.password){
             toast.error("Both email and password are require");
             return;
         }
-        authStore.Login(values);
+        rootStore.authStore.Login(values);
     }
 
     return(

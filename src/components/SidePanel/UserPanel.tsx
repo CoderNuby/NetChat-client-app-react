@@ -1,18 +1,18 @@
 import { useContext, useEffect, useState } from "react";
-import { Dropdown, Grid, GridColumn, GridRow, Header, HeaderContent, Icon } from "semantic-ui-react";
-import AuthStore from "../../stores/AuthStore";
+import { Dropdown, Grid, GridColumn, GridRow, Header, HeaderContent, Icon, Image } from "semantic-ui-react";
 import { IUserModel } from "../../models/userModel";
 import { observer } from "mobx-react-lite";
+import RootStore from "../../stores/RootStore";
 
 function UserPanel() {
 
     const [ user, setUser ] = useState<IUserModel | null>();
-    const authStore = useContext(AuthStore);
+    const rootStore = useContext(RootStore);
 
     useEffect(() => {
-        authStore.GetUserInfoFromLocalStorage();
-        setUser(authStore.CurrentUser);
-    }, [authStore]);
+        rootStore.authStore.GetUserInfoFromLocalStorage();
+        setUser(rootStore.authStore.CurrentUser);
+    }, [rootStore]);
 
     useEffect(() => {
     }, [user]);
@@ -40,7 +40,7 @@ function UserPanel() {
             {
                 key: "Logout",
                 text: (
-                    <span onClick={() => authStore.Logout()}>
+                    <span onClick={() => rootStore.authStore.Logout()}>
                         Logout
                     </span>
                 )
@@ -60,7 +60,7 @@ function UserPanel() {
                 </GridRow>
                 <Header style={{padding: "0.25rem"}} as="h4" inverted>
                     <Dropdown
-                    trigger={<span>{user?.userName}</span>}
+                    trigger={<span><Image src={user?.avatar} spaced="right" />{user?.userName}</span>}
                     options={dropDownOptions()}
                     ></Dropdown>
                 </Header>

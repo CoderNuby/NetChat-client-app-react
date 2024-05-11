@@ -2,19 +2,33 @@ import { Header, Icon, Segment } from "semantic-ui-react";
 import HeaderSubHeader from "semantic-ui-react/dist/commonjs/elements/Header/HeaderSubheader";
 import { SearchInput } from "./SearchInput";
 import React, { useContext } from "react";
-import ChannelStore from "../../stores/ChannelStore";
 import { observer } from "mobx-react-lite";
 import { ChannelTypeEnum } from "../../models/channelTypeEnum";
+import { IChannelUpdateModel } from "../../models/channelUpdateModel";
+import { IChannelModel } from "../../models/channelModel";
+import RootStore from "../../stores/RootStore";
 
 
 function MessageHeader() {
 
-    const channelStore = useContext(ChannelStore);
+    const rootStore = useContext(RootStore);
+
+    function toggleFavorite(channel: IChannelModel){
+        const channelToUpdate: IChannelUpdateModel = {
+            id: channel.id,
+            name: channel.name,
+            description: channel.description,
+            channelType: channel.channelType
+        }
+        rootStore.channelStore.updateChannel(channelToUpdate);
+        rootStore.messageStore.setMessages([]);
+        rootStore.channelStore.activeChannel = null;
+    }
 
     return (
         <Segment clearing>
             <Header fluid="true" as={"h2"} floated="left" style={{marginBottom: 0}}>
-                {channelStore.getActiveChannel() == null && (
+                {rootStore.channelStore.activeChannel == null && (
                     <React.Fragment>
                         <span>
                             Welcome to channel message
@@ -25,18 +39,18 @@ function MessageHeader() {
                         </p>
                     </React.Fragment>
                 )}
-                {channelStore.getActiveChannel() != null && (
+                {rootStore.channelStore.activeChannel != null && (
                     <React.Fragment>
                         <span>
-                            {channelStore.getActiveChannel()?.channelType === ChannelTypeEnum.Channel && (
+                            {rootStore.channelStore.activeChannel?.channelType !== ChannelTypeEnum.Room && (
                                 <>
-                                    {channelStore.getActiveChannel()?.name}
-                                    <Icon name={"star outline"} color="black" />
+                                    {rootStore.channelStore.activeChannel?.name}
+                                    <span onClick={() => toggleFavorite(rootStore.channelStore.activeChannel!)}><Icon name={rootStore.channelStore.activeChannel?.channelType === ChannelTypeEnum.Channel ? "star outline":"star"} color={rootStore.channelStore.activeChannel?.channelType === ChannelTypeEnum.Channel ? "black":"yellow"} /></span>
                                 </>
                             )}
-                            {channelStore.getActiveChannel()?.channelType === ChannelTypeEnum.Room && (
+                            {rootStore.channelStore.activeChannel?.channelType === ChannelTypeEnum.Room && (
                                 <>
-                                    {`Channel opened with ${channelStore.getActiveChannel()?.description}`}
+                                    {`Channel opened with ${rootStore.channelStore.activeChannel?.description}`}
                                     <Icon name={"users"} color="black" />
                                 </>
                             )}
@@ -45,7 +59,7 @@ function MessageHeader() {
                     </React.Fragment>
                 )}
             </Header>
-            {channelStore.getActiveChannel() != null && (
+            {rootStore.channelStore.activeChannel != null && (
                 <SearchInput />
             )}
         </Segment>

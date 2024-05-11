@@ -3,7 +3,7 @@ import { IMessageModel } from "../../models/messageModel";
 import moment from "moment";
 import { observer } from "mobx-react-lite";
 import { useContext } from "react";
-import AuthStore from "../../stores/AuthStore";
+import RootStore from "../../stores/RootStore";
 
 interface IProps{
     message: IMessageModel
@@ -11,12 +11,12 @@ interface IProps{
 
 function MessageDisplay(props: IProps) {
 
-    const authStore = useContext(AuthStore);
+    const rootStore = useContext(RootStore);
 
     return (
         <Comment>
             <CommentAvatar src={props.message.sender.avatar ?? 'https://www.gravatar.com/avatar/?=identicon'}/>    
-            <CommentContent  className={props.message.sender.email === authStore.CurrentUser?.email ? "message_self" : "message_other"}>
+            <CommentContent  className={props.message.sender.email === rootStore.authStore.CurrentUser?.email ? "message_self" : "message_other"}>
                 <CommentAuthor>{props.message.sender.userName}</CommentAuthor>
                 <CommentMetadata>{moment(props.message.createdAt).format("D MMMM YYYY")}</CommentMetadata>
                 {props.message.messageType === 0 && (

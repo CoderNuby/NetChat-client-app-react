@@ -2,21 +2,19 @@ import React, { useContext } from "react";
 import { CommentGroup, Segment } from "semantic-ui-react";
 import MessageHeader from "./MessagesHeader";
 import { MessageForm } from "./MessageForm";
-import ChannelStore from "../../stores/ChannelStore";
 import { observer } from "mobx-react-lite";
-import MessageStore from "../../stores/MessageStore";
 import MessageDisplay from "./MessageDisplay";
+import RootStore from "../../stores/RootStore";
 
 function Messages() {
 
-    const channelStore = useContext(ChannelStore);
-    const messageStore = useContext(MessageStore);
+    const rootStore = useContext(RootStore);
 
     function displayMessages(){
-        let messages = messageStore.getMessages();
+        let messages = rootStore.messageStore.getMessages();
 
         return(messages.length > 0 &&
-            messages.map((message) => (
+            messages.filter(x => x.channelId === rootStore.channelStore.activeChannel?.id).map((message) => (
                 <MessageDisplay key={message.id} message={message}></MessageDisplay>
             ))
         );
@@ -25,7 +23,7 @@ function Messages() {
     return (
         <React.Fragment>
             <MessageHeader />
-            {channelStore.getActiveChannel() != null && (
+            {rootStore.channelStore.activeChannel != null && (
                 <React.Fragment>
                     <Segment>
                         <CommentGroup className="messages">

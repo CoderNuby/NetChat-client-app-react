@@ -1,16 +1,16 @@
 
-import { ICreateMediaMessageModel } from "../models/createMediaMessageModel";
-import { ICreateMessageModel } from "../models/createMessageModel";
+import { IMessageCreateMediaModel } from "../models/messageCreateMediaModel";
+import { IMessageCreateModel } from "../models/messageCreateModel";
 import { IMessageModel } from "../models/messageModel";
 import { SeedService } from "./SeedService";
 
 
 class MessageServices extends SeedService {
-    send(message: ICreateMessageModel): Promise<IMessageModel>{
+    send(message: IMessageCreateModel): Promise<IMessageModel>{
         return this.request.post("messages", message);
     }
 
-    uploadMedia(mediaMessage: ICreateMediaMessageModel): Promise<IMessageModel> {
+    uploadMedia(mediaMessage: IMessageCreateMediaModel): Promise<IMessageModel> {
         let formData: FormData = new FormData();
         formData.append("File", mediaMessage.file);
         formData.append("ChannelId", mediaMessage.channelId);

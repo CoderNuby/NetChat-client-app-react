@@ -1,5 +1,4 @@
-import { action, computed, configure, makeObservable, observable, runInAction, toJS } from "mobx";
-import { createContext } from "react";
+import { action, computed, makeObservable, observable, runInAction, toJS } from "mobx";
 import AuthService from "../services/AuthService";
 import { IUserLoginModel } from "../models/userLoginModel";
 import { toast } from "react-toastify";
@@ -7,7 +6,7 @@ import { IUserModel } from "../models/userModel";
 import { IUserCreateModel } from "../models/userCreateModel";
 import { Md5 } from "ts-md5";
 
-configure({enforceActions: "always"})
+
 class AuthStore {
 
     authService: AuthService;
@@ -73,4 +72,4 @@ class AuthStore {
     }
 }
 
-export default createContext(new AuthStore());
+export default AuthStore;

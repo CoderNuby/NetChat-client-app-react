@@ -8,25 +8,23 @@ import ColorPanel from './components/ColorPanel/ColorPanel';
 import Messages from './components/Messages/Messages';
 import MetaPanel from './components/MetaPanel/MetaPanel';
 import { useContext, useEffect } from 'react';
-import MessageStore from './stores/MessageStore';
-import AuthStore from './stores/AuthStore';
+import RootStore from './stores/RootStore';
 
 function App() {
 
-  const authStore = useContext(AuthStore);
-  const messageStore = useContext(MessageStore);
+  const rootStore = useContext(RootStore);
 
   useEffect(() => {
     getUserInfo();
-    messageStore.createHubConnection(authStore.CurrentUser?.token || "");
+    rootStore.createHubConnection(rootStore.authStore.CurrentUser?.token || "");
 
     return () => {
-      messageStore.stopHubConnection();
+      rootStore.stopHubConnection();
     };
   });
 
   async function getUserInfo(){
-    await authStore.GetUserInfoFromLocalStorage();
+    await rootStore.authStore.GetUserInfoFromLocalStorage();
   }
 
   return (

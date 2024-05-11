@@ -1,5 +1,4 @@
 import { action, configure, makeObservable, observable, runInAction, toJS } from "mobx";
-import { createContext } from "react";
 import UserService from "../services/UserService";
 import { IUserModel } from "../models/userModel";
 
@@ -32,4 +31,4 @@ class UserStore {
     }
 }
 
-export default createContext(new UserStore());
+export default UserStore;

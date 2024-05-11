@@ -3,13 +3,13 @@ import { Button, Form, Grid, GridColumn, Header, Icon, Message, Segment } from "
 import { Form as FinalForm, Field } from "react-final-form";
 import { InputGeneric } from "../Common/Forms/InputGeneric";
 import { useContext } from "react";
-import AuthStore from "../../stores/AuthStore";
 import { IUserCreateModel } from "../../models/userCreateModel";
 import { toast } from "react-toastify";
+import RootStore from "../../stores/RootStore";
 
 function Register() {
 
-    const authStore = useContext(AuthStore);
+    const rootStore = useContext(RootStore);
 
     function onSubmit(values: IUserCreateModel){
         if(invalidForm(values)){
@@ -22,7 +22,7 @@ function Register() {
             return;
         }
         
-        authStore.Register(values);
+        rootStore.authStore.Register(values);
     }
 
     function invalidPasswords(user: IUserCreateModel){

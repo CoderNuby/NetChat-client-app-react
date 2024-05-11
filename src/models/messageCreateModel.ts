@@ -1,6 +1,6 @@
 
 
-export interface ICreateMessageModel {
+export interface IMessageCreateModel {
     content: string;
     channelId: string;
 }

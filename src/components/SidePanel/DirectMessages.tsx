@@ -1,33 +1,27 @@
 import { useContext, useEffect, useState } from "react";
 import { Divider, Icon, MenuItem, MenuMenu } from "semantic-ui-react";
-import UserStore from "../../stores/UserStore";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { IUserModel } from "../../models/userModel";
-import AuthStore from "../../stores/AuthStore";
-import ChannelStore from "../../stores/ChannelStore";
-import MessageStore from "../../stores/MessageStore";
+import RootStore from "../../stores/RootStore";
 
 
 function DirectMessages() {
 
     const [ users, setUsers ] = useState<IUserModel[]>([]);
 
-    const userStore = useContext(UserStore);
-    const authStore = useContext(AuthStore);
-    const channelStore = useContext(ChannelStore);
-    const messageStore = useContext(MessageStore);
+    const rootStore = useContext(RootStore);
 
     useEffect(() => {
-        userStore.setAll().then(() => {
-            setUsers(userStore.getUsers())
+        rootStore.userStore.setAll().then(() => {
+            setUsers(rootStore.userStore.getUsers())
         });
-    }, [userStore]);
+    }, [rootStore]);
 
     function displayUsers() {
         return (
             users?.length > 0 && 
-            users?.filter(x => x.id !== authStore.CurrentUser?.id).map((user) => (
+            users?.filter(x => x.id !== rootStore.authStore.CurrentUser?.id).map((user) => (
                 <React.Fragment key={user.id}>
                     <MenuItem
                         name={user.userName + "_field_name"}
@@ -43,9 +37,9 @@ function DirectMessages() {
     }
 
     async function selectUser(user: IUserModel){
-        await channelStore.createPrivateChannel(user.id);
-        let messages = channelStore.getActiveChannel()?.messages;
-        messageStore.setMessages(messages);
+        await rootStore.channelStore.createPrivateChannel(user.id);
+        let messages = rootStore.channelStore.activeChannel?.messages;
+        rootStore.messageStore.setMessages(messages);
     }
 
     return (

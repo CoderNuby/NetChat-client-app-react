@@ -1,23 +1,23 @@
 import React, { useContext } from "react";
-import { Divider, MenuItem } from "semantic-ui-react";
+import { Divider, Label, MenuItem } from "semantic-ui-react";
 import { IChannelModel } from "../../models/channelModel";
-import ChannelStore from "../../stores/ChannelStore";
 import { observer } from "mobx-react-lite";
-import MessageStore from "../../stores/MessageStore";
+import RootStore from "../../stores/RootStore";
 
 interface IProp {
-    channel: IChannelModel
+    channel: IChannelModel;
+    notificationCounter: (channel: IChannelModel) => number | undefined;
 }
 
 function ChannelItem(props: IProp) {
 
-    const channelStore = useContext(ChannelStore);
-    const messageStore = useContext(MessageStore);
+    const rootStore = useContext(RootStore);
 
     async function changeChannel(channel: IChannelModel){
-        await channelStore.setActiveChannel(channel.id);
-        let messages = channelStore.getActiveChannel()?.messages;
-        messageStore.setMessages(messages);
+        await rootStore.channelStore.setActiveChannel(channel.id);
+        let messages = rootStore.channelStore.activeChannel?.messages;
+        rootStore.messageStore.setMessages(messages);
+        rootStore.channelStore.cleanNotification(channel.id);
     }
 
     return (
@@ -27,11 +27,18 @@ function ChannelItem(props: IProp) {
                 name={props.channel.name}
                 style={{ opacity: 0.7, paddingLeft: "1.5rem", cursor: "pointer" }}
             >
-                <span onClick={() => changeChannel(props.channel)}># {props.channel.name}</span>
+                <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }} onClick={() => changeChannel(props.channel)}>
+                    <span>
+                        # {props.channel.name}
+                    </span>
+                    {props.notificationCounter(props.channel) && (
+                        <Label color="red">{props.notificationCounter(props.channel)}</Label>
+                    )}
+                </span>
             </MenuItem>
             <Divider />
         </React.Fragment>
     );
 }
 
-export default observer(ChannelItem)
+export default observer(ChannelItem);

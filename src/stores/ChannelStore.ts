@@ -1,9 +1,12 @@
-import { action, configure, makeObservable, observable, runInAction, toJS } from "mobx";
-import { createContext } from "react";
+import { action, configure, makeObservable, observable, runInAction } from "mobx";
 import { IChannelModel } from "../models/channelModel";
 import ChannelService from "../services/ChannelService";
 import { toast } from "react-toastify";
 import { ChannelTypeEnum } from "../models/channelTypeEnum";
+import { IChannelUpdateModel } from "../models/channelUpdateModel";
+import { IMessageModel } from "../models/messageModel";
+import { IChannelNotificationModel } from "../models/channelNotificationModel";
+import { RootStore } from "./RootStore";
 
 configure({enforceActions: "always"})
 class ChannelStore {
@@ -15,15 +18,16 @@ class ChannelStore {
         makeObservable(this);
     }
 
-    @observable private channels: IChannelModel[] = [];
+    @observable public channels: IChannelModel[] = [];
     @observable openModal: boolean = false;
-    @observable private activeChannel: IChannelModel | null = null;
+    @observable activeChannel: IChannelModel | null = null;
+    @observable channelNotification: IChannelNotificationModel[] = [];
 
     @action async loadChannels() {
         try {
             var resp = await this.channelService.getChannels();
             runInAction(() => {
-                this.channels = resp.filter(x => x.channelType === ChannelTypeEnum.Channel);
+                this.channels = resp;
             })
         } catch (err) {
             console.error(err);
@@ -55,6 +59,19 @@ class ChannelStore {
         }
     }
 
+    @action async updateChannel(channel: IChannelUpdateModel) {
+        try {
+            channel.channelType === ChannelTypeEnum.Favorite ? channel.channelType = ChannelTypeEnum.Channel : channel.channelType = ChannelTypeEnum.Favorite;
+            var newChannel = await this.channelService.updateChannel(channel);
+            runInAction(() => {
+                this.channels = this.channels.filter(x => x.id !== newChannel.id);
+                this.channels.push(newChannel);
+            });
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
     @action async setActiveChannel(channelId: string){
         let result = await this.channelService.getChannel(channelId);
         runInAction(() => {
@@ -62,14 +79,35 @@ class ChannelStore {
         });
     }
 
-    getChannels() {
-        return toJS(this.channels);
+    @action async addNotification(channelId: string, message: IMessageModel){
+        let notification = await this.channelNotification.filter(x => x.id === channelId);
+
+        if(notification.length === 0){
+            runInAction(() => {
+                this.channelNotification.push({
+                    id: channelId,
+                    newMessages: 1,
+                    sender: message.sender
+                });
+            });
+            return;
+        }
+        
+        runInAction(() => {
+            notification[0].newMessages += 1;
+        });
     }
 
-    getActiveChannel() {
-        return toJS(this.activeChannel);
+    @action cleanNotification(channelId: string){
+        let notification = this.channelNotification.filter(x => x.id === channelId);
+
+        if(notification.length !== 0){
+            runInAction(() => {
+                notification[0].newMessages = 0;
+            });
+        }
     }
 }
 
 
-export default createContext(new ChannelStore())
+export default ChannelStore;

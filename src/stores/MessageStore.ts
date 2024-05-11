@@ -1,36 +1,37 @@
-import { action, configure, makeObservable, observable, runInAction, toJS } from "mobx";
-import { createContext, useContext } from "react";
+import { action, configure, makeObservable, observable, toJS } from "mobx";
 import { IMessageModel } from "../models/messageModel";
-import { ICreateMessageModel } from "../models/createMessageModel";
+import { IMessageCreateModel } from "../models/messageCreateModel";
 import MessageServices from "../services/MessageService";
-import { ICreateMediaMessageModel } from "../models/createMediaMessageModel";
-import { HubConnection, HubConnectionBuilder, LogLevel } from "@aspnet/signalr";
-
+import { IMessageCreateMediaModel } from "../models/messageCreateMediaModel";
+import { RootStore } from "./RootStore";
 
 configure({enforceActions: "always"})
 class MessageStore {
 
     messageService: MessageServices;
+    rootStore: RootStore;
 
-    constructor(){
+    constructor(rootStore: RootStore){
         this.messageService = new MessageServices();
+        this.rootStore = rootStore;
         makeObservable(this);
     }
 
-    @observable private messages: IMessageModel[] = [];
-    @observable.ref hubConnection: HubConnection | null = null;
+    @observable messages: IMessageModel[] = [];
 
-    @action async sendMessage(message: ICreateMessageModel){
+    @action async sendMessage(message: IMessageCreateModel){
         try {
-            let result = await this.hubConnection?.invoke("SendMessage", message);
+            let result = await this.rootStore.hubConnection?.invoke<IMessageModel>("SendMessage", message);
+            return result;
         } catch (error) {
             console.error(error);
         }
     }
 
-    @action async uploadImage(message: ICreateMediaMessageModel){
+    @action async uploadImage(message: IMessageCreateMediaModel){
         try {
             let result = await this.messageService.uploadMedia(message);
+            return result;
         } catch (error) {
             console.error(error);
         }
@@ -40,32 +41,10 @@ class MessageStore {
         this.messages = messages;
     }
 
-    @action createHubConnection(token: string) {
-        runInAction(() => {
-            this.hubConnection = new HubConnectionBuilder().withUrl("https://localhost:44397/chat", {
-                accessTokenFactory: () => token
-            }).configureLogging(LogLevel.Information)
-            .build();
-        });
-
-        this.hubConnection?.start().catch((error) => console.log(error));
-
-        this.hubConnection?.on("ReceiveMessage", (response) => {
-            runInAction(() => {
-                let message = response.result;
-                this.messages.push(message);
-            });
-        });
-    }
-
-    @action stopHubConnection() {
-        this.hubConnection?.stop();
-    }
-
     getMessages(){
         return toJS(this.messages);
     }
 }
 
 
-export default createContext(new MessageStore());
+export default MessageStore;

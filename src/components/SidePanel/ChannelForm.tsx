@@ -2,9 +2,9 @@ import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { Button, Form, FormField, Header, Icon, Input, Modal, ModalActions, ModalContent } from "semantic-ui-react";
 import { IChannelModel } from "../../models/channelModel";
 import { v4 as uuid } from "uuid";
-import ChannelStore from "../../stores/ChannelStore";
 import { observer } from "mobx-react-lite";
 import { toast } from "react-toastify";
+import RootStore from "../../stores/RootStore";
 
 
 function ChannelForm() {
@@ -20,11 +20,11 @@ function ChannelForm() {
 
     const [channel, setChannel] = useState<IChannelModel>(initChannel);
 
-    const channelStore = useContext(ChannelStore)
+    const rootStore = useContext(RootStore);
 
     useEffect(() => {
 
-    }, [channelStore]);
+    }, [rootStore]);
 
     function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
         setChannel({...channel, [event.target.name]: event.target.value});
@@ -32,7 +32,7 @@ function ChannelForm() {
 
     function closeModal(){
         setChannel(initChannel);
-        channelStore.setOpenModal(false);
+        rootStore.channelStore.setOpenModal(false);
     }
 
     function saveChannel(){
@@ -44,16 +44,16 @@ function ChannelForm() {
             toast.error("Both name and description are require");
             return;
         }
-        channelStore.createChannel(newChannel);
+        rootStore.channelStore.createChannel(newChannel);
         closeModal();
     }
 
     return(
         <Modal
             basic
-            onClose={() => channelStore.setOpenModal(false)}
-            onOpen={() => channelStore.setOpenModal(true)}
-            open={channelStore.openModal}
+            onClose={() => rootStore.channelStore.setOpenModal(false)}
+            onOpen={() => rootStore.channelStore.setOpenModal(true)}
+            open={rootStore.channelStore.openModal}
             size='small'
             trigger={<Icon name="add" style={{ paddingLeft: "3rem" }}/>}
         >
