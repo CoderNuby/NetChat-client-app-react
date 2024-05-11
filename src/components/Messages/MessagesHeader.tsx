@@ -1,17 +1,40 @@
 import { Header, Icon, Segment } from "semantic-ui-react";
 import HeaderSubHeader from "semantic-ui-react/dist/commonjs/elements/Header/HeaderSubheader";
 import { SearchInput } from "./SearchInput";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { ChannelTypeEnum } from "../../models/channelTypeEnum";
 import { IChannelUpdateModel } from "../../models/channelUpdateModel";
 import { IChannelModel } from "../../models/channelModel";
 import RootStore from "../../stores/RootStore";
+import { IMessageModel } from "../../models/messageModel";
 
 
 function MessageHeader() {
 
     const rootStore = useContext(RootStore);
+    const [usersCount, setUsersCount] = useState<number>(0);
+    const [currentMessages, setMessages] = useState<IMessageModel[]>([]);
+
+    useEffect(() => {
+        const messages = rootStore.channelStore.activeChannel?.messages || [];
+        setMessages(messages);
+    
+        const totalUsers = getTotalUsers() || 0;
+        setUsersCount(totalUsers);
+    }, [rootStore.channelStore.activeChannel?.messages]);
+
+    function getTotalUsers() {
+        const uniqueUsers = currentMessages?.reduce((acc: string[], message) => {
+            if(!acc.includes(message.sender.userName)) {
+                acc.push(message.sender.userName);
+            }
+
+            return acc;
+        }, []);
+
+        return uniqueUsers?.length;
+    }
 
     function toggleFavorite(channel: IChannelModel){
         const channelToUpdate: IChannelUpdateModel = {
@@ -55,7 +78,7 @@ function MessageHeader() {
                                 </>
                             )}
                         </span>
-                        <HeaderSubHeader>2 Users</HeaderSubHeader>
+                        <HeaderSubHeader>{usersCount} Users</HeaderSubHeader>
                     </React.Fragment>
                 )}
             </Header>

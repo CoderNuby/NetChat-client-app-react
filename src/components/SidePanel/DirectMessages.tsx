@@ -16,7 +16,7 @@ function DirectMessages() {
         rootStore.userStore.setAll().then(() => {
             setUsers(rootStore.userStore.getUsers())
         });
-    }, [rootStore]);
+    }, [rootStore.userStore]);
 
     function displayUsers() {
         return (

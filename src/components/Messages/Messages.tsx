@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { CommentGroup, Segment } from "semantic-ui-react";
 import MessageHeader from "./MessagesHeader";
 import { MessageForm } from "./MessageForm";
@@ -10,6 +10,7 @@ function Messages() {
 
     const rootStore = useContext(RootStore);
 
+    
     function displayMessages(){
         let messages = rootStore.messageStore.getMessages();
 
@@ -19,6 +20,8 @@ function Messages() {
             ))
         );
     }
+
+
 
     return (
         <React.Fragment>

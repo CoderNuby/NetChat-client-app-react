@@ -1,4 +1,4 @@
-import { action, configure, makeObservable, observable, toJS } from "mobx";
+import { action, configure, makeObservable, observable, runInAction, toJS } from "mobx";
 import { IMessageModel } from "../models/messageModel";
 import { IMessageCreateModel } from "../models/messageCreateModel";
 import MessageServices from "../services/MessageService";
@@ -18,6 +18,7 @@ class MessageStore {
     }
 
     @observable messages: IMessageModel[] = [];
+    @observable userPosts: {[name: string] : { avatar: string, count: number}} = {}
 
     @action async sendMessage(message: IMessageCreateModel){
         try {
@@ -38,7 +39,29 @@ class MessageStore {
     }
 
     @action setMessages(messages: IMessageModel[] = []){
-        this.messages = messages;
+        runInAction(() => {
+            this.messages = messages;
+        });
+        this.countUserPosts();
+    }
+
+    @action countUserPosts() {
+        let userPosts = this.messages.reduce((acc: any, message) => {
+            if(message.sender.userName in acc) {
+                acc[message.sender.userName].count++;
+            }else{
+                acc[message.sender.userName] = {
+                    avatar: message.sender.avatar,
+                    count: 1
+                }
+            }
+
+            return acc;
+        }, {});
+
+        runInAction(() => {
+            this.userPosts = userPosts;
+        });
     }
 
     getMessages(){

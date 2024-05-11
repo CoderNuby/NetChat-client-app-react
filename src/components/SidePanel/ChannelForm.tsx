@@ -1,4 +1,4 @@
-import { ChangeEvent, useContext, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useState } from "react";
 import { Button, Form, FormField, Header, Icon, Input, Modal, ModalActions, ModalContent } from "semantic-ui-react";
 import { IChannelModel } from "../../models/channelModel";
 import { v4 as uuid } from "uuid";
@@ -21,10 +21,6 @@ function ChannelForm() {
     const [channel, setChannel] = useState<IChannelModel>(initChannel);
 
     const rootStore = useContext(RootStore);
-
-    useEffect(() => {
-
-    }, [rootStore]);
 
     function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
         setChannel({...channel, [event.target.name]: event.target.value});

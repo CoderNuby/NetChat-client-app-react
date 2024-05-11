@@ -15,7 +15,7 @@ function Favorites() {
             await rootStore.channelStore.loadChannels();
         }
         loadData()
-    }, [rootStore]);
+    }, [rootStore.channelStore]);
 
     function displayUsers() {
         return (

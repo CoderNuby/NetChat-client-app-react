@@ -14,9 +14,6 @@ function UserPanel() {
         setUser(rootStore.authStore.CurrentUser);
     }, [rootStore]);
 
-    useEffect(() => {
-    }, [user]);
-
     function dropDownOptions(){
         var res = [
             {

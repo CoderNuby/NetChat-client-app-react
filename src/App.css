@@ -13,3 +13,10 @@ html, body, .app{
   border-left: 2px solid rgb(37, 125, 240);
   padding-left: 7px;
 }
+
+.user__float {
+  border: 1px solid #8f8f8f;
+  margin: 1rem;
+  padding: 1rem;
+  display: flex;
+}
