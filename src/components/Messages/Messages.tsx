@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { CommentGroup, Segment } from "semantic-ui-react";
 import MessageHeader from "./MessagesHeader";
 import MessageForm from "./MessageForm";
@@ -11,6 +11,17 @@ function Messages() {
 
     const rootStore = useContext(RootStore);
 
+    let messageEnd: any;
+
+    useEffect(() => {
+        if(messageEnd){
+            scrollToBottom();
+        }
+    });
+
+    function scrollToBottom() {
+        messageEnd.scrollIntoView({behavior: "smooth"});
+    }
     
     function displayMessages(){
         let messages = rootStore.messageStore.getMessages();
@@ -33,6 +44,7 @@ function Messages() {
                             {rootStore.messageStore.typingNotifications.length !== 0 && (
                                 <Typing />
                             )}
+                            <div ref={(node: any) => (messageEnd = node)}></div>
                         </CommentGroup>
                     </Segment>
                     <MessageForm />
