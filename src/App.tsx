@@ -15,32 +15,13 @@ function App() {
   const rootStore = useContext(RootStore);
 
   useEffect(() => {
-    getUserInfo();
-    connectioHub();
-    getChannels();
-    deleteTypingNotifications();
-
+    rootStore.authStore.GetUserInfoFromLocalStorage();
+    rootStore.createHubConnection(rootStore.authStore.CurrentUser?.token || "");
 
     return () => {
       rootStore.stopHubConnection();
     };
   });
-
-  async function deleteTypingNotifications() {
-    await rootStore.messageStore.deleteTypingNotificationByCurrentUser();
-  }
-
-  async function connectioHub() {
-    await rootStore.createHubConnection(rootStore.authStore.CurrentUser?.token || "");
-  }
-
-  async function getUserInfo(){
-    await rootStore.authStore.GetUserInfoFromLocalStorage();
-  }
-
-  async function getChannels() {
-    await rootStore.channelStore.loadChannels();
-  }
 
   return (
     <Grid columns="equal" className='app'>

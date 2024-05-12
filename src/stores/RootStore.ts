@@ -27,7 +27,10 @@ export class RootStore {
             .build();
         });
 
-        this.hubConnection?.start().catch((error) => console.log(error));
+        this.hubConnection?.start().then(async () => {
+            this.channelStore.loadChannels();
+            this.messageStore.deleteTypingNotificationByCurrentUser();
+        }).catch((error) => console.log(error));
 
         this.hubConnection?.on("ReceiveMessage", (response) => {
             runInAction(async () => {

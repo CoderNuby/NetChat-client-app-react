@@ -16,7 +16,7 @@ export function InputGeneric(props: IProps){
                 {props.iconLabel && (
                     props.iconLabel
                 )}
-                <input {...props.input} />
+                <input {...props.input} ref={props.inputRef} />
                 {props.icon && (
                     <Icon name={props.icon} />
                 )}
