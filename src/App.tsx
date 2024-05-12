@@ -9,9 +9,13 @@ import Messages from './components/Messages/Messages';
 import MetaPanel from './components/MetaPanel/MetaPanel';
 import { useContext, useEffect } from 'react';
 import RootStore from './stores/RootStore';
+import { observer } from 'mobx-react-lite';
 
-function App() {
+interface IProps {
+  gridColor: string;
+}
 
+function AppWrapper() {
   const rootStore = useContext(RootStore);
 
   useEffect(() => {
@@ -21,10 +25,15 @@ function App() {
     return () => {
       rootStore.stopHubConnection();
     };
-  });
+  }, [rootStore, rootStore.authStore]);
+
+  return <App gridColor={rootStore.userStore.appUserColorsPreferences.secondaryAppColor}/>;
+}
+
+function App(props: IProps) {
 
   return (
-    <Grid columns="equal" className='app'>
+    <Grid columns="equal" className='app' style={{background: props.gridColor, minHeight: "100vh"}}>
       <ColorPanel />
       <SidePanel />
       <GridColumn style={{ marginLeft: "1rem" }}>
@@ -37,4 +46,4 @@ function App() {
   ); 
 }
 
-export default App;
+export default observer(AppWrapper);

@@ -5,13 +5,17 @@ import { toast } from "react-toastify";
 import { IUserModel } from "../models/userModel";
 import { IUserCreateModel } from "../models/userCreateModel";
 import { Md5 } from "ts-md5";
+import { RootStore } from "./RootStore";
 
 
 class AuthStore {
 
     authService: AuthService;
 
-    constructor(){
+    rootStore: RootStore;
+
+    constructor(rootStore: RootStore){
+        this.rootStore = rootStore;
         this.authService = new AuthService();
         makeObservable(this);
     }
@@ -54,6 +58,10 @@ class AuthStore {
             let user: IUserModel = JSON.parse(userJson);
             runInAction(() => {
                 this.CurrentUser = user;
+                this.rootStore.userStore.appUserColorsPreferences = {
+                    primaryAppColor: this.CurrentUser.primaryAppColor,
+                    secondaryAppColor: this.CurrentUser.secondaryAppColor
+                }
                 return toJS(this.CurrentUser);
             });
         } else {

@@ -47,7 +47,7 @@ function UserPanel() {
     }
 
     return (
-        <Grid style={{background: "#4c3c4c", margin: 0}}>
+        <Grid style={{background: rootStore.userStore.appUserColorsPreferences.primaryAppColor, margin: 0}}>
             <GridColumn>
                 <GridRow style={{padding: "1.2rem", margin: 0}}>
                     <Header inverted floated="left" as="h2">

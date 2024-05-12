@@ -5,4 +5,6 @@ export interface IUserModel{
     token: string;
     avatar: string;
     isOnline: boolean;
+    primaryAppColor: string;
+    secondaryAppColor: string;
 }

@@ -91,6 +91,7 @@ html, body, .app{
   height: 35px;
   transform: rotate(225deg);
 }
+
 .messages {
   height: 62vh;
   overflow-y: auto;

@@ -11,10 +11,10 @@ import { ITypingNotificationModel } from "../models/typingNotificationModel";
 
 configure({enforceActions: "always"})
 export class RootStore {
-    authStore: AuthStore = new AuthStore();
+    authStore: AuthStore = new AuthStore(this);
     channelStore: ChannelStore = new ChannelStore(this);
     messageStore: MessageStore = new MessageStore(this);
-    userStore: UserStore = new UserStore();
+    userStore: UserStore = new UserStore(this);
 
     
     @observable.ref hubConnection: HubConnection | null = null;
