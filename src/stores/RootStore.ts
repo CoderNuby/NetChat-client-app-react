@@ -6,12 +6,13 @@ import { action, configure, observable, runInAction } from "mobx";
 import { HubConnection, HubConnectionBuilder, LogLevel } from "@aspnet/signalr";
 import { createContext } from "react";
 import { IMessageModel } from "../models/messageModel";
+import { ITypingNotificationModel } from "../models/typingNotificationModel";
 
 
 configure({enforceActions: "always"})
 export class RootStore {
     authStore: AuthStore = new AuthStore();
-    channelStore: ChannelStore = new ChannelStore();
+    channelStore: ChannelStore = new ChannelStore(this);
     messageStore: MessageStore = new MessageStore(this);
     userStore: UserStore = new UserStore();
 
@@ -30,9 +31,23 @@ export class RootStore {
 
         this.hubConnection?.on("ReceiveMessage", (response) => {
             runInAction(async () => {
-                let message: IMessageModel = response.result;
+                let message: IMessageModel = response;
                 this.messageStore.messages.push(message);
                 await this.channelStore.addNotification(message.channelId, message);
+            });
+        });
+
+        this.hubConnection?.on("ReceiveTypingNotification", (response) => {
+            runInAction(async () => {
+                let typingNotification: ITypingNotificationModel = response;
+                this.messageStore.typingNotifications.push(typingNotification);
+            });
+        });
+
+        this.hubConnection?.on("ReceiveDeleteTypingNotification", (response) => {
+            runInAction(async () => {
+                let typingNotification: ITypingNotificationModel = response;
+                this.messageStore.typingNotifications = this.messageStore.typingNotifications.filter(x => x.id !== typingNotification.id);
             });
         });
     }

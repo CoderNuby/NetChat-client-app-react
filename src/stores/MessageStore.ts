@@ -4,6 +4,7 @@ import { IMessageCreateModel } from "../models/messageCreateModel";
 import MessageServices from "../services/MessageService";
 import { IMessageCreateMediaModel } from "../models/messageCreateMediaModel";
 import { RootStore } from "./RootStore";
+import { ITypingNotificationModel } from "../models/typingNotificationModel";
 
 configure({enforceActions: "always"})
 class MessageStore {
@@ -18,7 +19,8 @@ class MessageStore {
     }
 
     @observable messages: IMessageModel[] = [];
-    @observable userPosts: {[name: string] : { avatar: string, count: number}} = {}
+    @observable userPosts: {[name: string] : { avatar: string, count: number}} = {};
+    @observable typingNotifications: ITypingNotificationModel[] = [];
 
     @action async sendMessage(message: IMessageCreateModel){
         try {
@@ -62,6 +64,25 @@ class MessageStore {
         runInAction(() => {
             this.userPosts = userPosts;
         });
+    }
+
+    @action async createTypingNotification(){
+        try {
+            let channelId = this.rootStore.channelStore.activeChannel?.id;
+            let result = await this.rootStore.hubConnection?.invoke<ITypingNotificationModel>("SendTypingNotification", channelId);
+            return result;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    @action async deleteTypingNotification(typingId: string){
+        try {
+            let result = await this.rootStore.hubConnection?.invoke<ITypingNotificationModel>("DeleteTypingNotification", typingId);
+            return result;
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     getMessages(){

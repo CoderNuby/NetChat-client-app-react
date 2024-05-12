@@ -12,9 +12,11 @@ configure({enforceActions: "always"})
 class ChannelStore {
 
     channelService: ChannelService;
+    rootStore: RootStore;
 
-    constructor(){
+    constructor(rootStore: RootStore){
         this.channelService = new ChannelService();
+        this.rootStore = rootStore;
         makeObservable(this);
     }
 

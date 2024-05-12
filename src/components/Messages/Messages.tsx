@@ -1,10 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { CommentGroup, Segment } from "semantic-ui-react";
 import MessageHeader from "./MessagesHeader";
-import { MessageForm } from "./MessageForm";
+import MessageForm from "./MessageForm";
 import { observer } from "mobx-react-lite";
 import MessageDisplay from "./MessageDisplay";
 import RootStore from "../../stores/RootStore";
+import Typing from "./Typing";
 
 function Messages() {
 
@@ -21,8 +22,6 @@ function Messages() {
         );
     }
 
-
-
     return (
         <React.Fragment>
             <MessageHeader />
@@ -31,6 +30,9 @@ function Messages() {
                     <Segment>
                         <CommentGroup className="messages">
                             {displayMessages()}
+                            {rootStore.messageStore.typingNotifications.length !== 0 && (
+                                <Typing />
+                            )}
                         </CommentGroup>
                     </Segment>
                     <MessageForm />
