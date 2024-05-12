@@ -2,12 +2,12 @@ import { Button, ButtonGroup, Form, Segment } from "semantic-ui-react";
 import { Form as FinalForm, Field } from "react-final-form";
 import { IMessageCreateModel } from "../../models/messageCreateModel";
 import { InputGeneric } from "../Common/Forms/InputGeneric";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import FileModal from "./FileModal";
 import { IMessageCreateMediaModel } from "../../models/messageCreateMediaModel";
 import RootStore from "../../stores/RootStore";
-import { OnBlur, OnChange, OnFocus } from "react-final-form-listeners";
+import { OnBlur, OnChange } from "react-final-form-listeners";
 import { ITypingNotificationModel } from "../../models/typingNotificationModel";
 import { observer } from "mobx-react-lite";
 
@@ -16,10 +16,6 @@ function MessageForm() {
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [typing, setTyping] = useState<ITypingNotificationModel | null>(null);
-
-    useEffect(() => {
-        console.log(typing);
-    }, [typing]);
 
     const rootStore = useContext(RootStore);
 

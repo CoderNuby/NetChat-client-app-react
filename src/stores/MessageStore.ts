@@ -85,6 +85,18 @@ class MessageStore {
         }
     }
 
+    @action async deleteTypingNotificationByCurrentUser() {
+        try {
+            let result = await this.messageService.getAllTypingNotificationByCurrentUser();
+
+            result.forEach(async (typing) => {
+                let response = await this.deleteTypingNotification(typing.id);
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     getMessages(){
         return toJS(this.messages);
     }

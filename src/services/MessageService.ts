@@ -2,6 +2,7 @@
 import { IMessageCreateMediaModel } from "../models/messageCreateMediaModel";
 import { IMessageCreateModel } from "../models/messageCreateModel";
 import { IMessageModel } from "../models/messageModel";
+import { ITypingNotificationModel } from "../models/typingNotificationModel";
 import { SeedService } from "./SeedService";
 
 
@@ -18,6 +19,10 @@ class MessageServices extends SeedService {
         return this.request.post("messages/upload", formData, {
             headers: { 'Content-Type': 'multipart/form-data'}
         });
+    }
+
+    getAllTypingNotificationByCurrentUser(): Promise<ITypingNotificationModel[]>{
+        return this.request.get("messages/typing/all-by-current-user");
     }
 }
 

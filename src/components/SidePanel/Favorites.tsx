@@ -10,13 +10,6 @@ import RootStore from "../../stores/RootStore";
 function Favorites() {
     const rootStore = useContext(RootStore);
 
-    useEffect(() => {
-        async function loadData(){
-            await rootStore.channelStore.loadChannels();
-        }
-        loadData()
-    }, [rootStore.channelStore]);
-
     function displayUsers() {
         return (
             rootStore.channelStore.channels.filter(x => x.channelType === ChannelTypeEnum.Favorite)?.length > 0 && 

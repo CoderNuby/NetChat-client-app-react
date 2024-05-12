@@ -11,13 +11,6 @@ import RootStore from "../../stores/RootStore";
 function Channels () {
     const rootStore = useContext(RootStore);
 
-    useEffect(() => {
-        async function loadData(){
-            await rootStore.channelStore.loadChannels();
-        }
-        loadData()
-    }, [rootStore]);
-
     function displayChannels(channels: IChannelModel[]) {
         return (
             channels.length > 0 &&

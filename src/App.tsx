@@ -16,15 +16,30 @@ function App() {
 
   useEffect(() => {
     getUserInfo();
-    rootStore.createHubConnection(rootStore.authStore.CurrentUser?.token || "");
+    connectioHub();
+    getChannels();
+    deleteTypingNotifications();
+
 
     return () => {
       rootStore.stopHubConnection();
     };
   });
 
+  async function deleteTypingNotifications() {
+    await rootStore.messageStore.deleteTypingNotificationByCurrentUser();
+  }
+
+  async function connectioHub() {
+    await rootStore.createHubConnection(rootStore.authStore.CurrentUser?.token || "");
+  }
+
   async function getUserInfo(){
     await rootStore.authStore.GetUserInfoFromLocalStorage();
+  }
+
+  async function getChannels() {
+    await rootStore.channelStore.loadChannels();
   }
 
   return (
